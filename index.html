@@ -4,61 +4,57 @@
     <meta charset="UTF-8">
     <title>STYLESTORE - Каталог</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .filter-btn.active { background: #1e293b; color: white; }
-    </style>
 </head>
 <body class="bg-gray-50 text-slate-900">
 
-<header class="bg-white border-b px-10 py-4 flex justify-between items-center sticky top-0 z-50">
-    <div class="text-2xl font-black tracking-tighter">STYLESTORE</div>
-    <div class="flex items-center gap-6">
-        <div class="relative cursor-pointer" onclick="location.href='cart.html'">
-            <span class="text-2xl">🛒</span>
-            <span id="cart-count" class="absolute -top-2 -right-2 bg-orange-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">0</span>
-        </div>
+<header class="bg-white border-b px-10 py-5 flex justify-between items-center sticky top-0 z-50">
+    <div class="text-3xl font-black tracking-tighter text-slate-800">STYLESTORE</div>
+    
+    <div class="flex-1 max-w-md mx-10">
+        <input type="text" id="searchInput" oninput="searchProduct()" placeholder="Пошук товарів..." 
+               class="w-full bg-gray-100 border-none rounded-xl px-5 py-3 focus:ring-2 focus:ring-slate-800 outline-none">
     </div>
+
+    <button onclick="location.href='cart.html'" class="flex items-center gap-3 bg-slate-800 text-white px-6 py-3 rounded-xl font-bold hover:bg-black transition">
+        <span>КОШИК</span>
+        <span id="cart-count" class="bg-orange-500 text-white text-xs px-2 py-1 rounded-lg">0</span>
+    </button>
 </header>
 
 <main class="max-w-7xl mx-auto py-10 px-6">
-    <div class="flex gap-4 mb-10 overflow-x-auto pb-2">
-        <button class="filter-btn active border px-6 py-2 rounded-full font-medium" onclick="filter('Bci')">Всі</button>
-        <button class="filter-btn border px-6 py-2 rounded-full font-medium" onclick="filter('Сумки')">Сумки</button>
-        <button class="filter-btn border px-6 py-2 rounded-full font-medium" onclick="filter('Окуляри')">Окуляри</button>
-        <button class="filter-btn border px-6 py-2 rounded-full font-medium" onclick="filter('Годинники')">Годинники</button>
-    </div>
+    <h1 class="text-4xl font-extrabold mb-10">Популярні товари</h1>
 
-    <h2 class="text-3xl font-bold mb-8">Популярні товари</h2>
-
-    <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
         </div>
 </main>
 
 <script>
     const products = [
-        { id: 1, name: "Шкіряна сумка Premium", price: 2500, cat: "Сумки", img: "https://via.placeholder.com/400x500" },
-        { id: 2, name: "Окуляри Aviator", price: 899, oldPrice: 1200, cat: "Окуляри", img: "https://via.placeholder.com/400x500", sale: true },
-        { id: 3, name: "Годинник Classic Black", price: 4200, cat: "Годинники", img: "https://via.placeholder.com/400x500" }
+        { id: 1, name: "Шкіряна сумка Premium", price: 2500, img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500" },
+        { id: 2, name: "Окуляри Aviator", price: 899, oldPrice: 1200, img: "https://images.unsplash.com/photo-1511499767390-90342f16b147?w=500" },
+        { id: 3, name: "Годинник Classic Black", price: 4200, img: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=500" }
     ];
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
     function render(data) {
         document.getElementById('product-grid').innerHTML = data.map(p => `
-            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 p-4 relative group">
-                ${p.sale ? '<span class="absolute top-6 left-6 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-md z-10">SALE</span>' : ''}
-                <div class="h-[400px] bg-gray-100 rounded-2xl mb-6 relative overflow-hidden">
-                    <img src="${p.img}" class="w-full h-full object-cover">
-                    <button class="absolute top-4 right-4 bg-white/80 p-2 rounded-full shadow-sm">❤️</button>
+            <div class="bg-white rounded-[32px] overflow-hidden shadow-sm border border-gray-100 p-5 relative group transition-all hover:shadow-xl">
+                <div class="h-[380px] bg-gray-100 rounded-[24px] mb-6 overflow-hidden">
+                    <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                 </div>
                 <div class="text-center">
-                    <h3 class="text-xl font-bold mb-2">${p.name}</h3>
-                    <div class="mb-6">
-                        ${p.oldPrice ? `<span class="text-gray-400 line-through mr-2">${p.oldPrice} грн</span>` : ''}
-                        <span class="text-xl font-black">${p.price} грн</span>
+                    <h3 class="text-2xl font-bold mb-3">${p.name}</h3>
+                    <div class="mb-6 flex justify-center items-center gap-3">
+                        ${p.oldPrice ? `<span class="text-gray-400 line-through font-medium">${p.oldPrice} грн</span>` : ''}
+                        <span class="text-2xl font-black text-slate-900">${p.price} грн</span>
                     </div>
-                    <button onclick="addToCart(${p.id})" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold mb-2 hover:bg-slate-900 transition">В кошик</button>
-                    <button class="w-full border border-slate-200 py-3 rounded-xl font-medium text-sm hover:bg-gray-50 transition">Купити в 1 клік</button>
+                    <button onclick="addToCart(${p.id})" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold text-lg hover:bg-black transition shadow-lg shadow-slate-200">
+                        В кошик
+                    </button>
+                    <button class="w-full border-2 border-slate-100 py-3 rounded-2xl font-bold text-slate-500 mt-3 hover:bg-gray-50 transition">
+                        Купити в 1 клік
+                    </button>
                 </div>
             </div>
         `).join('');
@@ -76,10 +72,9 @@
         document.getElementById('cart-count').innerText = cart.length;
     }
 
-    function filter(cat) {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-        const filtered = cat === 'Bci' ? products : products.filter(p => p.cat === cat);
+    function searchProduct() {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = products.filter(p => p.name.toLowerCase().includes(term));
         render(filtered);
     }
 
