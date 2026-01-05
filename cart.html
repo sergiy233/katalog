@@ -2,56 +2,36 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>STYLESTORE - Кошик</title>
+    <title>Оформлення замовлення</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 p-10 text-slate-800">
+<body class="bg-gray-50 p-10">
 
-<a href="index.html" class="inline-block mb-10 text-slate-500 hover:text-black transition">← Продовжити покупки</a>
+<div class="max-w-6xl mx-auto">
+    <button onclick="location.href='index.html'" class="mb-8 font-bold text-slate-400 hover:text-black transition">← ПЕРЕЙТИ ДО КАТАЛОГУ</button>
 
-<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-    <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
-        <h2 class="text-2xl font-bold mb-8">Оформлення замовлення</h2>
-        <form class="space-y-6">
-            <div>
-                <label class="block text-sm font-bold mb-2">Ваше ім'я *</label>
-                <input type="text" placeholder="Іван Іванов" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div class="bg-white p-10 rounded-[40px] shadow-sm border">
+            <h2 class="text-3xl font-black mb-8">Оформлення замовлення</h2>
+            <div class="space-y-6">
+                <input type="text" placeholder="Ваше ім'я *" class="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-slate-800">
+                <input type="text" placeholder="Телефон *" class="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-slate-800">
+                <input type="text" placeholder="Місто" class="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-slate-800">
+                <select class="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none appearance-none">
+                    <option>Нова Пошта (відділення)</option>
+                    <option>Самовивіз</option>
+                </select>
+                <button class="w-full bg-slate-900 text-white py-5 rounded-[24px] font-black text-xl mt-6 hover:shadow-2xl transition">ПІДТВЕРДИТИ</button>
             </div>
-            <div>
-                <label class="block text-sm font-bold mb-2">Телефон *</label>
-                <input type="text" placeholder="+380..." class="w-full border p-3 rounded-xl outline-none">
-            </div>
-            <div>
-                <label class="block text-sm font-bold mb-2">Email (необов'язково)</label>
-                <input type="email" placeholder="example@mail.com" class="w-full border p-3 rounded-xl outline-none">
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-bold mb-2">Спосіб доставки</label>
-                    <select class="w-full border p-3 rounded-xl outline-none">
-                        <option>Нова Пошта (відділення)</option>
-                        <option>Кур'єр Нова Пошта</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-2">Спосіб оплати</label>
-                    <select class="w-full border p-3 rounded-xl outline-none">
-                        <option>Післяплата (при отриманні)</option>
-                        <option>Оплата карткою</option>
-                    </select>
-                </div>
-            </div>
-            <button type="button" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-black transition mt-4">Підтвердити замовлення</button>
-        </form>
-    </div>
+        </div>
 
-    <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 h-fit">
-        <h2 class="text-2xl font-bold mb-8 text-center lg:text-left">Ваш кошик</h2>
-        <div id="cart-items" class="space-y-6">
+        <div class="bg-white p-10 rounded-[40px] shadow-sm border h-fit">
+            <h2 class="text-2xl font-black mb-8">Ваш кошик</h2>
+            <div id="cart-list" class="space-y-6"></div>
+            <div class="border-t mt-10 pt-6 flex justify-between items-end">
+                <span class="font-bold text-gray-400">Підсумок:</span>
+                <span id="final-price" class="text-3xl font-black text-slate-900">0 грн</span>
             </div>
-        <div class="border-t mt-10 pt-6 flex justify-between items-center">
-            <span class="text-xl font-bold">Разом:</span>
-            <span id="total-sum" class="text-2xl font-black">0 грн</span>
         </div>
     </div>
 </div>
@@ -60,20 +40,20 @@
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
     function renderCart() {
-        const container = document.getElementById('cart-items');
-        if(cart.length === 0) {
-            container.innerHTML = '<p class="text-gray-400 text-center py-10">Кошик порожній</p>';
-            document.getElementById('total-sum').innerText = "0 грн";
+        const list = document.getElementById('cart-list');
+        if (cart.length === 0) {
+            list.innerHTML = '<p class="text-center py-10 text-gray-400 font-medium italic">Кошик порожній...</p>';
+            document.getElementById('final-price').innerText = "0 грн";
             return;
         }
 
-        container.innerHTML = cart.map((item, idx) => `
-            <div class="flex items-center justify-between">
+        list.innerHTML = cart.map((item, idx) => `
+            <div class="flex items-center justify-between border-b border-gray-50 pb-4">
                 <div class="flex items-center gap-4">
-                    <img src="${item.img}" class="w-16 h-16 rounded-xl object-cover">
+                    <img src="${item.img}" class="w-20 h-20 rounded-2xl object-cover">
                     <div>
-                        <h4 class="font-bold text-sm">${item.name}</h4>
-                        <p class="text-gray-400 text-sm font-medium">${item.price} грн</p>
+                        <h4 class="font-bold">${item.name}</h4>
+                        <p class="font-black text-slate-800">${item.price} грн</p>
                     </div>
                 </div>
                 <button onclick="remove(${idx})" class="text-red-400 font-bold hover:text-red-600">Видалити</button>
@@ -81,7 +61,7 @@
         `).join('');
 
         const total = cart.reduce((s, i) => s + i.price, 0);
-        document.getElementById('total-sum').innerText = total + " грн";
+        document.getElementById('final-price').innerText = total + " грн";
     }
 
     function remove(idx) {
@@ -89,7 +69,6 @@
         localStorage.setItem('cart', JSON.stringify(cart));
         renderCart();
     }
-
     renderCart();
 </script>
 </body>
