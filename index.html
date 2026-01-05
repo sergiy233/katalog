@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Каталог продукції</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Каталог продукції</h1>
+
+<div class="controls">
+    <input type="text" id="search" placeholder="Пошук...">
+    <select id="category">
+        <option value="all">Всі категорії</option>
+    </select>
+</div>
+
+<div class="products" id="products"></div>
+
+<div class="cart" id="cart">
+    <h2>Корзина</h2>
+    <div id="cart-items"></div>
+    <div class="cart-total">Всього: $<span id="total">0</span></div>
+</div>
+
+<script src="cart/cart.js"></script>
+<script>
+const productsData = [
+    {id:1, name:"Товар 1", category:"Електроніка", price:50},
+    {id:2, name:"Товар 2", category:"Книги", price:15},
+    {id:3, name:"Товар 3", category:"Одяг", price:30},
+    {id:4, name:"Товар 4", category:"Електроніка", price:80},
+    {id:5, name:"Товар 5", category:"Книги", price:20},
+];
+
+const categories = ["all", ...new Set(productsData.map(p=>p.category))];
+const categorySelect = document.getElementById("category");
+categories.forEach(cat=>{
+    const opt = document.createElement("option");
+    opt.value = cat; opt.textContent = cat;
+    categorySelect.appendChild(opt);
+});
+
+const productsContainer = document.getElementById("products");
+
+function renderProducts() {
+    const searchTerm = document.getElementById("search").value.toLowerCase();
+    const selectedCat = categorySelect.value;
+    productsContainer.innerHTML = "";
+    productsData.filter(p=>{
+        return (selectedCat=="all" || p.category==selectedCat) && p.name.toLowerCase().includes(searchTerm);
+    }).forEach(p=>{
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `<h3>${p.name}</h3><p>${p.category}</p><p>$${p.price}</p>
+            <button onclick="addToCart(${p.id}, '${p.name}', ${p.price})">Додати в корзину</button>`;
+        productsContainer.appendChild(div);
+    });
+}
+
+document.getElementById("search").addEventListener("input", renderProducts);
+categorySelect.addEventListener("change", renderProducts);
+
+renderProducts();
+</script>
+
+</body>
+</html>
