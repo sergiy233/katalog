@@ -5,66 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Каталог продукції</title>
 <link rel="stylesheet" href="style.css">
+<style>
+body { font-family: Arial; margin: 20px; }
+.products { display: flex; gap: 20px; flex-wrap: wrap; }
+.product { border: 1px solid #ccc; padding: 10px; width: 150px; text-align: center; border-radius: 8px; }
+.cart-icon { position: fixed; top: 20px; right: 20px; font-size: 24px; cursor: pointer; }
+</style>
 </head>
 <body>
 
 <h1>Каталог продукції</h1>
 
-<div class="controls">
-    <input type="text" id="search" placeholder="Пошук...">
-    <select id="category">
-        <option value="all">Всі категорії</option>
-    </select>
+<!-- Іконка корзини -->
+<a href="cart.html" class="cart-icon">🛒</a>
+
+<div class="products">
+    <div class="product">
+        <h3>Товар 1</h3>
+        <p>Категорія: Електроніка</p>
+        <p>$50</p>
+    </div>
+    <div class="product">
+        <h3>Товар 2</h3>
+        <p>Категорія: Книги</p>
+        <p>$15</p>
+    </div>
+    <div class="product">
+        <h3>Товар 3</h3>
+        <p>Категорія: Одяг</p>
+        <p>$30</p>
+    </div>
 </div>
-
-<div class="products" id="products"></div>
-
-<div class="cart" id="cart">
-    <h2>Корзина</h2>
-    <div id="cart-items"></div>
-    <div class="cart-total">Всього: $<span id="total">0</span></div>
-</div>
-
-<script src="cart/cart.js"></script>
-<script>
-const productsData = [
-    {id:1, name:"Товар 1", category:"Електроніка", price:50},
-    {id:2, name:"Товар 2", category:"Книги", price:15},
-    {id:3, name:"Товар 3", category:"Одяг", price:30},
-    {id:4, name:"Товар 4", category:"Електроніка", price:80},
-    {id:5, name:"Товар 5", category:"Книги", price:20},
-];
-
-const categories = ["all", ...new Set(productsData.map(p=>p.category))];
-const categorySelect = document.getElementById("category");
-categories.forEach(cat=>{
-    const opt = document.createElement("option");
-    opt.value = cat; opt.textContent = cat;
-    categorySelect.appendChild(opt);
-});
-
-const productsContainer = document.getElementById("products");
-
-function renderProducts() {
-    const searchTerm = document.getElementById("search").value.toLowerCase();
-    const selectedCat = categorySelect.value;
-    productsContainer.innerHTML = "";
-    productsData.filter(p=>{
-        return (selectedCat=="all" || p.category==selectedCat) && p.name.toLowerCase().includes(searchTerm);
-    }).forEach(p=>{
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `<h3>${p.name}</h3><p>${p.category}</p><p>$${p.price}</p>
-            <button onclick="addToCart(${p.id}, '${p.name}', ${p.price})">Додати в корзину</button>`;
-        productsContainer.appendChild(div);
-    });
-}
-
-document.getElementById("search").addEventListener("input", renderProducts);
-categorySelect.addEventListener("change", renderProducts);
-
-renderProducts();
-</script>
 
 </body>
 </html>
