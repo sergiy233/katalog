@@ -1,41 +1,89 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Каталог продукції</title>
-<link rel="stylesheet" href="style.css">
-<style>
-body { font-family: Arial; margin: 20px; }
-.products { display: flex; gap: 20px; flex-wrap: wrap; }
-.product { border: 1px solid #ccc; padding: 10px; width: 150px; text-align: center; border-radius: 8px; }
-.cart-icon { position: fixed; top: 20px; right: 20px; font-size: 24px; cursor: pointer; }
-</style>
+    <meta charset="UTF-8">
+    <title>STYLESTORE - Каталог</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .filter-btn.active { background: #1e293b; color: white; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50 text-slate-900">
 
-<h1>Каталог продукції</h1>
-
-<!-- Іконка корзини -->
-<a href="cart.html" class="cart-icon">🛒</a>
-
-<div class="products">
-    <div class="product">
-        <h3>Товар 1</h3>
-        <p>Категорія: Електроніка</p>
-        <p>$50</p>
+<header class="bg-white border-b px-10 py-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="text-2xl font-black tracking-tighter">STYLESTORE</div>
+    <div class="flex items-center gap-6">
+        <div class="relative cursor-pointer" onclick="location.href='cart.html'">
+            <span class="text-2xl">🛒</span>
+            <span id="cart-count" class="absolute -top-2 -right-2 bg-orange-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">0</span>
+        </div>
     </div>
-    <div class="product">
-        <h3>Товар 2</h3>
-        <p>Категорія: Книги</p>
-        <p>$15</p>
-    </div>
-    <div class="product">
-        <h3>Товар 3</h3>
-        <p>Категорія: Одяг</p>
-        <p>$30</p>
-    </div>
-</div>
+</header>
 
+<main class="max-w-7xl mx-auto py-10 px-6">
+    <div class="flex gap-4 mb-10 overflow-x-auto pb-2">
+        <button class="filter-btn active border px-6 py-2 rounded-full font-medium" onclick="filter('Bci')">Всі</button>
+        <button class="filter-btn border px-6 py-2 rounded-full font-medium" onclick="filter('Сумки')">Сумки</button>
+        <button class="filter-btn border px-6 py-2 rounded-full font-medium" onclick="filter('Окуляри')">Окуляри</button>
+        <button class="filter-btn border px-6 py-2 rounded-full font-medium" onclick="filter('Годинники')">Годинники</button>
+    </div>
+
+    <h2 class="text-3xl font-bold mb-8">Популярні товари</h2>
+
+    <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        </div>
+</main>
+
+<script>
+    const products = [
+        { id: 1, name: "Шкіряна сумка Premium", price: 2500, cat: "Сумки", img: "https://via.placeholder.com/400x500" },
+        { id: 2, name: "Окуляри Aviator", price: 899, oldPrice: 1200, cat: "Окуляри", img: "https://via.placeholder.com/400x500", sale: true },
+        { id: 3, name: "Годинник Classic Black", price: 4200, cat: "Годинники", img: "https://via.placeholder.com/400x500" }
+    ];
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function render(data) {
+        document.getElementById('product-grid').innerHTML = data.map(p => `
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 p-4 relative group">
+                ${p.sale ? '<span class="absolute top-6 left-6 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-md z-10">SALE</span>' : ''}
+                <div class="h-[400px] bg-gray-100 rounded-2xl mb-6 relative overflow-hidden">
+                    <img src="${p.img}" class="w-full h-full object-cover">
+                    <button class="absolute top-4 right-4 bg-white/80 p-2 rounded-full shadow-sm">❤️</button>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold mb-2">${p.name}</h3>
+                    <div class="mb-6">
+                        ${p.oldPrice ? `<span class="text-gray-400 line-through mr-2">${p.oldPrice} грн</span>` : ''}
+                        <span class="text-xl font-black">${p.price} грн</span>
+                    </div>
+                    <button onclick="addToCart(${p.id})" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold mb-2 hover:bg-slate-900 transition">В кошик</button>
+                    <button class="w-full border border-slate-200 py-3 rounded-xl font-medium text-sm hover:bg-gray-50 transition">Купити в 1 клік</button>
+                </div>
+            </div>
+        `).join('');
+        updateCount();
+    }
+
+    function addToCart(id) {
+        const p = products.find(x => x.id === id);
+        cart.push(p);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCount();
+    }
+
+    function updateCount() {
+        document.getElementById('cart-count').innerText = cart.length;
+    }
+
+    function filter(cat) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        const filtered = cat === 'Bci' ? products : products.filter(p => p.cat === cat);
+        render(filtered);
+    }
+
+    render(products);
+</script>
 </body>
 </html>
